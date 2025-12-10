@@ -1,0 +1,114 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["omitApi"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Department {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique @db.VarChar(50)
+  requests Request[]
+  users    User[]
+
+  @@map("departments")
+}
+
+model Position {
+  id    Int    @id @default(autoincrement())
+  name  String @unique @db.VarChar(50)
+  users User[]
+
+  @@map("positions")
+}
+
+model User {
+  id                Int        @id @default(autoincrement())
+  name              String     @db.VarChar(50)
+  email             String     @unique @db.VarChar(50)
+  phone_number      String     @unique @db.VarChar(20)
+  password          String     @db.VarChar(200)
+  role              UserRole
+  department_id     Int
+  position_id       Int
+  status            UserStatus
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  approvedRequests  Request[]  @relation("RequestApprovedBy")
+  rejectedRequests  Request[]  @relation("RequestRejectedBy")
+  requestedRequests Request[]  @relation("RequestRequestedBy")
+  department        Department @relation(fields: [department_id], references: [id])
+  position          Position   @relation(fields: [position_id], references: [id])
+
+  @@map("users")
+}
+
+model Request {
+  id              Int             @id @default(autoincrement())
+  requested_by_id Int
+  request_code    String
+  request_date    DateTime
+  department_id   Int
+  project_name    String          @db.VarChar(150)
+  priority        RequestPriority
+  status          RequestStatus
+  notes           String
+  approved_by_id  Int?
+  rejected_by_id  Int?
+  approved_at     DateTime?
+  rejected_at     DateTime?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  MaterialDetails MaterialDetails[]
+  approved_by     User?             @relation("RequestApprovedBy", fields: [approved_by_id], references: [id])
+  department      Department        @relation(fields: [department_id], references: [id])
+  rejected_by     User?             @relation("RequestRejectedBy", fields: [rejected_by_id], references: [id])
+  request_by      User              @relation("RequestRequestedBy", fields: [requested_by_id], references: [id])
+
+  @@map("requests")
+}
+
+model MaterialDetails {
+  id                   Int      @id @default(autoincrement())
+  request_id           Int
+  material_code        String   @db.VarChar(150)
+  material_description String
+  quantity             Decimal
+  unit                 String
+  material_type        String   @db.VarChar(25)
+  specification        String
+  brand                String
+  notes                String
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  request              Request  @relation(fields: [request_id], references: [id], onDelete: Cascade)
+
+  @@map("materialDetails")
+}
+
+enum UserRole {
+  REQUESTER
+  APPROVER
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum RequestPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum RequestStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  REJECTED
+}
