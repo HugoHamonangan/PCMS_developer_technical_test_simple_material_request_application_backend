@@ -2,7 +2,7 @@
 /* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/prisma.service';
-import { Request, Prisma } from '@/generated/prisma';
+import { Request, Prisma, User } from '@/generated/prisma';
 
 import {
   ApiResponseForMany,
@@ -23,6 +23,30 @@ export class RequestService {
         where: {
           id: id,
         },
+        include: {
+          request_by: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+          approved_by: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+          rejected_by: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+          department: true,
+        },
       });
 
       return createResponseForOne(request, 'Successfully fetch requests', 200);
@@ -35,27 +59,25 @@ export class RequestService {
     }
   }
 
-  async requests(params: {
-    skip?: number;
-    take?: number;
-    q?: string;
-  }): Promise<ApiResponseForMany<RequestInterface>> {
+  async requests(
+    params: {
+      skip?: number;
+      take?: number;
+      q?: string;
+    },
+    req,
+  ): Promise<ApiResponseForMany<RequestInterface>> {
     try {
       const skip = +params.skip ? +params.skip : 0;
       const take = +params.take ? +params.take : 10;
 
-      const search: Prisma.RequestWhereInput = params.q
-        ? {
-            OR: [
-              {
-                project_name: {
-                  contains: params.q,
-                  mode: 'insensitive',
-                },
-              },
-            ],
-          }
-        : {};
+      const isPermittedUser = !['ADMIN', 'APPROVER'].includes(req.role);
+      const search: Prisma.RequestWhereInput = {
+        ...(isPermittedUser ? { requested_by_id: req.id } : {}),
+        ...(params.q
+          ? { project_name: { contains: params.q, mode: 'insensitive' } }
+          : {}),
+      };
 
       const [requests, total] = await this.prisma.$transaction([
         this.prisma.request.findMany({
@@ -79,11 +101,15 @@ export class RequestService {
 
   async createRequest(
     data: requestSchema.RequestType,
+    req: User,
   ): Promise<ApiResponseForOne<RequestInterface>> {
     try {
       const code = `MR-${new Date().getFullYear()}-${Date.now()}`;
 
+      data.requested_by_id = req.id;
       data.request_code = code;
+      data.request_date = new Date().toISOString();
+      data.department_id = req.department_id;
 
       const [request] = await this.prisma.$transaction([
         this.prisma.request.create({
@@ -114,6 +140,66 @@ export class RequestService {
         return createResponseForOne(null, 'Request not found', 404);
       }
       return createResponseForOne(error, 'Fail to add requests', 500);
+    }
+  }
+
+  async updateRequestApproval(req: User, id: number) {
+    try {
+      const approvedId = req.id;
+      const [request] = await this.prisma.$transaction([
+        this.prisma.request.update({
+          where: {
+            id: id,
+          },
+          data: {
+            approved_by_id: approvedId,
+            approved_at: new Date().toISOString(),
+            rejected_by_id: null,
+            rejected_at: null,
+            status: 'APPROVED',
+          },
+        }),
+      ]);
+      return createResponseForOne(
+        request,
+        'Sucessfully approve this request',
+        201,
+      );
+    } catch (error) {
+      if (error.code === 'P2025') {
+        return createResponseForOne(null, 'Request not found', 404);
+      }
+      return createResponseForOne(error, 'Fail to approve ', 500);
+    }
+  }
+
+  async updateRequestRejection(req: User, id: number) {
+    try {
+      const rejectedId = req.id;
+      const [request] = await this.prisma.$transaction([
+        this.prisma.request.update({
+          where: {
+            id: id,
+          },
+          data: {
+            approved_by_id: null,
+            approved_at: null,
+            rejected_by_id: rejectedId,
+            rejected_at: new Date().toISOString(),
+            status: 'REJECTED',
+          },
+        }),
+      ]);
+      return createResponseForOne(
+        request,
+        'Sucessfully reject this request',
+        201,
+      );
+    } catch (error) {
+      if (error.code === 'P2025') {
+        return createResponseForOne(null, 'Request not found', 404);
+      }
+      return createResponseForOne(error, 'Fail to reject request', 500);
     }
   }
 

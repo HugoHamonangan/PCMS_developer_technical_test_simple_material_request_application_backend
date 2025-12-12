@@ -17,6 +17,17 @@ export const requestSchema = z.object({
 
 export type RequestType = z.infer<typeof requestSchema>;
 
+export const AddRequestSchema = z
+  .object({
+    project_name: z.string().max(150),
+    priority: z.enum(['LOW', 'MEDIUM', 'HIGH']),
+    status: z.enum(['DRAFT', 'SUBMITTED', 'APPROVED', 'REJECTED']),
+    notes: z.string().optional().default(''),
+  })
+  .strict();
+
+export type AddRequestType = z.infer<typeof AddRequestSchema>;
+
 export const updateRequestSchema = z.object({
   requested_by_id: z.number().int().optional(),
   department_id: z.number().int().optional(),

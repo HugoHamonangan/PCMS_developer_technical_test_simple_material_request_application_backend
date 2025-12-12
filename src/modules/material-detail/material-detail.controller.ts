@@ -37,20 +37,19 @@ import { JwtAuthGuard } from '../../guard/jwt-auth.guard';
 export class MaterialDetailController {
   constructor(private materialDetailService: MaterialDetailService) {}
 
-  @UseGuards(JwtAuthGuard)
-  @Get()
+  @Get('request/:id')
   async findAll(
     @Query() query,
+    @Param('id', ParseIntPipe) requestId: number,
   ): Promise<ApiResponseForMany<MaterialDetailInterface>> {
-    return await this.materialDetailService.materialDetails(query);
+    return await this.materialDetailService.materialDetails(query, requestId);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get(':id')
   async findOne(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<ApiResponseForOne<MaterialDetailInterface>> {
-    return await this.materialDetailService.materialDetail(+id);
+    return await this.materialDetailService.materialDetail(id);
   }
 
   @UseGuards(JwtAuthGuard)

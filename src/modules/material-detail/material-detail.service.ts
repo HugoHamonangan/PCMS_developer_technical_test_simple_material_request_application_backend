@@ -42,27 +42,33 @@ export class MaterialDetailService {
     }
   }
 
-  async materialDetails(params: {
-    skip?: number;
-    take?: number;
-    q?: string;
-  }): Promise<ApiResponseForMany<MaterialDetailInterface>> {
+  async materialDetails(
+    params: {
+      skip?: number;
+      take?: number;
+      q?: string;
+    },
+    requestId: number,
+  ): Promise<ApiResponseForMany<MaterialDetailInterface>> {
     try {
-      const skip = +params.skip ? +params.skip : 0;
-      const take = +params.take ? +params.take : 10;
+      const skip = params.skip ? +params.skip : 0;
+      const take = params.take ? +params.take : 10;
 
-      const search: Prisma.MaterialDetailsWhereInput = params.q
-        ? {
-            OR: [
-              {
-                material_code: {
-                  contains: params.q,
-                  mode: 'insensitive',
+      const search: Prisma.MaterialDetailsWhereInput = {
+        request_id: requestId,
+        ...(params.q
+          ? {
+              OR: [
+                {
+                  material_code: {
+                    contains: params.q,
+                    mode: 'insensitive',
+                  },
                 },
-              },
-            ],
-          }
-        : {};
+              ],
+            }
+          : {}),
+      };
 
       const [materialDetails, total] = await this.prisma.$transaction([
         this.prisma.materialDetails.findMany({
@@ -70,19 +76,19 @@ export class MaterialDetailService {
           skip,
           take,
         }),
-        this.prisma.materialDetails.count({ where: search, skip, take }),
+        this.prisma.materialDetails.count({ where: search }),
       ]);
 
       return createResponseForMany(
         materialDetails,
-        'Successfully fetch material details',
+        'Successfully fetched material details',
         200,
         total,
       );
     } catch (error) {
       return createResponseForMany(
         error,
-        'Fail to fetch material details',
+        'Failed to fetch material details',
         500,
         0,
       );

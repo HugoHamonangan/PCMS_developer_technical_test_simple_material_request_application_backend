@@ -5,10 +5,11 @@ import { AuthService } from '@/modules/auth/auth.service';
 import { PrismaModule } from '../../../prisma/prisma.module';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
+import { UserService } from '../user/user.service';
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy, UserService],
   imports: [
     PrismaModule,
     JwtModule.registerAsync({
