@@ -119,7 +119,7 @@ export class UserService {
     }
   }
 
-  async updateUser(data: userSchema.UserType, id: number) {
+  async updateUser(data: userSchema.UpdateUserType, id: number) {
     try {
       const [user] = await this.prisma.$transaction([
         this.prisma.user.update({

@@ -116,7 +116,7 @@ export class MaterialDetailService {
   }
 
   async updateMaterialDetail(
-    data: materialDetailSchema.MaterialDetailType,
+    data: materialDetailSchema.UpdateMaterialDetailType,
     id: number,
   ) {
     try {

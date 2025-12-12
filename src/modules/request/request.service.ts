@@ -123,7 +123,7 @@ export class RequestService {
     }
   }
 
-  async updateRequest(data: requestSchema.RequestType, id: number) {
+  async updateRequest(data: requestSchema.UpdateRequestType, id: number) {
     try {
       const [request] = await this.prisma.$transaction([
         this.prisma.request.update({
