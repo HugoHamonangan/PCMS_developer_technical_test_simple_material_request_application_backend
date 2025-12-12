@@ -1,3 +1,3 @@
-import { Position } from '@/generated/prisma';
+import { Position } from '@prisma/client';
 
 export type PositionInterface = Position;

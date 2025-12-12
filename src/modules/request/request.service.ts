@@ -2,7 +2,7 @@
 /* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/prisma.service';
-import { Request, Prisma, User } from '@/generated/prisma';
+import { Prisma, User } from '@prisma/client';
 
 import {
   ApiResponseForMany,

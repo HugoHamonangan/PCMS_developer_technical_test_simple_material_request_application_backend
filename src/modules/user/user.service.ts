@@ -2,7 +2,7 @@
 /* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/prisma.service';
-import { Prisma, PrismaClient } from '@/generated/prisma';
+import { Prisma } from '@prisma/client';
 import { UserWithoutPassword } from '@/modules/user/interfaces/user.interface';
 
 import {

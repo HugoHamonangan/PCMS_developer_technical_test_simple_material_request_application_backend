@@ -1,3 +1,3 @@
-import { Request } from '@/generated/prisma';
+import { Request } from '@prisma/client';
 
 export type RequestInterface = Request;
