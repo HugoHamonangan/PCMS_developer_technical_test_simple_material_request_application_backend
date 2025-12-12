@@ -36,6 +36,7 @@ $ npm run start
 
 # watch mode
 $ npm run start:dev
+```
 
 - project will be running in the http://localhost:3000 
 
@@ -55,11 +56,27 @@ REQUESTER ROLE
 email: requester1@company.com
 password: Pa$$w0rd!
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <hr>
 
 Documentantion and discussion that help me make this backend
 
-[https://ui.shadcn.com/docs/components/form
+https://ui.shadcn.com/docs/components/form
 
 https://nextjs.org/docs/app/api-reference/functions/cookies
 
@@ -147,4 +164,4 @@ https://docs.nestjs.com/recipes/passport#implement-protected-route-and-jwt-strat
 
 https://docs.nestjs.com/guards#role-based-authentication
 
-https://docs.nestjs.com/guards#role-based-authentication)
+https://docs.nestjs.com/guards#role-based-authentication
