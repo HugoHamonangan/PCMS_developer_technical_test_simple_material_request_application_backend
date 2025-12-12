@@ -50,12 +50,12 @@ APPROVER ROLE
 email: approver@company.com
 password: Pa$$w0rd!
 
-For testing purpose POSTMAN collection is provided also
 
 REQUESTER ROLE
 email: requester1@company.com
 password: Pa$$w0rd!
 
+For testing purpose POSTMAN collection is provided also
 
 
 
