@@ -76,26 +76,6 @@ For testing purpose POSTMAN collection is provided also
 
 Documentantion and discussion that help me make this backend
 
-https://ui.shadcn.com/docs/components/form
-
-https://nextjs.org/docs/app/api-reference/functions/cookies
-
-https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie
-
-https://lucide.dev/guide/packages/lucide-react
-
-https://ui.shadcn.com/docs/components/sidebar
-
-https://stackoverflow.com/questions/71706064/react-18-hydration-failed-because-the-initial-ui-does-not-match-what-was-render
-
-https://nextjs.org/docs/pages/building-your-application/routing/dynamic-routes
-
-https://zustand.docs.pmnd.rs/integrations/persisting-store-data
-
-https://stackoverflow.com/questions/10730362/get-cookie-by-name
-
-https://github.com/shadcn-ui/ui/issues/7036](https://www.prisma.io/docs/orm/prisma-schema/data-model/models
-
 https://docs.nestjs.com/recipes/prisma
 
 https://github.com/prisma/prisma/issues/28573
